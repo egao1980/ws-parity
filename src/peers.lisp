@@ -11,15 +11,21 @@
   (not (%env-off-p "WS_PARITY_PEERS")))
 
 (defun which (program)
+  "Resolve PROGRAM. On Windows return the bare name (PATH search) so
+   UIOP/CreateProcess is not handed a `Program Files` path with spaces."
   (or (uiop:getenv (format nil "WS_PARITY_~a" (string-upcase program)))
-      (ignore-errors
-        (string-trim
-         '(#\space #\newline #\return)
-         (uiop:run-program
-          (if (uiop:os-windows-p)
-              (list "where" program)
-              (list "which" program))
-          :output :string :error-output nil)))))
+      (if (uiop:os-windows-p)
+          (when (zerop (nth-value 2 (uiop:run-program
+                                     (list "where" program)
+                                     :ignore-error-status t
+                                     :output nil
+                                     :error-output nil)))
+            program)
+          (ignore-errors
+            (string-trim '(#\space #\newline #\return)
+                         (uiop:run-program (list "which" program)
+                                           :output :string
+                                           :error-output nil))))))
 
 (defun node-available-p ()
   (and (peers-enabled-p)
