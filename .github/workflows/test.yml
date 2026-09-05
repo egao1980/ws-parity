@@ -41,8 +41,8 @@ jobs:
 
       - name: Install peers
         run: |
-          (cd peers/node && npm install)
-          (cd peers/python && uv sync)
+          npm --prefix peers/node install
+          uv sync --project peers/python
 
       - uses: egao1980/cl-repository/.github/actions/setup-lisp@main
         with:
