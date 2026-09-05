@@ -65,6 +65,7 @@ closes from the Lisp client so the peer can record the code."
 (defun foreign-echo (kind url payload)
   (let* ((cmd (client-command kind url payload 1000))
          (out (uiop:run-program cmd
+                                :directory (peer-workdir kind)
                                 :output :string
                                 :error-output :string
                                 :ignore-error-status t)))
@@ -78,6 +79,7 @@ closes from the Lisp client so the peer can record the code."
 (defun foreign-close-code (kind url)
   (let* ((cmd (client-command kind url "close-probe" 1000))
          (out (uiop:run-program cmd
+                                :directory (peer-workdir kind)
                                 :output :string
                                 :error-output :string
                                 :ignore-error-status t)))

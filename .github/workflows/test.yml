@@ -39,10 +39,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install peers
-        run: |
-          npm --prefix peers/node install
-          uv sync --project peers/python
+      - name: Install Node peer
+        working-directory: peers/node
+        run: npm install
+
+      - name: Install Python peer
+        working-directory: peers/python
+        run: uv sync
 
       - uses: egao1980/cl-repository/.github/actions/setup-lisp@main
         with:

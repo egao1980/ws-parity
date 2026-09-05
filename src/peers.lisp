@@ -96,21 +96,22 @@
       (t
        (error "no python runtime for peer ~a" script)))))
 
+(defun peer-workdir (kind)
+  "CWD so Node ESM can resolve `ws` from peers/node/node_modules."
+  (when (eq kind :node)
+    (uiop:native-namestring (merge-pathnames "node/" *peer-root*))))
+
 (defun peer-command (kind port)
   (ecase kind
     (:node
-     (list (which "node")
-           (uiop:native-namestring (merge-pathnames "node/server.mjs" *peer-root*))
-           (princ-to-string port)))
+     (list (which "node") "server.mjs" (princ-to-string port)))
     (:python
      (python-cmd "server.py" (princ-to-string port)))))
 
 (defun client-command (kind url payload close-code)
   (ecase kind
     (:node
-     (list (which "node")
-           (uiop:native-namestring (merge-pathnames "node/client.mjs" *peer-root*))
-           url payload (princ-to-string close-code)))
+     (list (which "node") "client.mjs" url payload (princ-to-string close-code)))
     (:python
      (python-cmd "client.py" url payload (princ-to-string close-code)))))
 
@@ -119,6 +120,7 @@
          (log (uiop:with-temporary-file (:pathname p :keep t)
                 p))
          (proc (uiop:launch-program cmd
+                                    :directory (peer-workdir kind)
                                     :output log
                                     :error-output :output)))
     (handler-case
