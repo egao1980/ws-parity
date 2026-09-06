@@ -17,7 +17,7 @@
   :properties (:cl-repo
                (:ci (:with ("dissect" "http-backend-async"
                              "event-backend-libuv" "cl-stack-ssl"
-                             "fast-websocket" "http2/client"
+                             "fast-websocket" "http2"
                              "compression-protocol" "compression-backend-chipz"))))
   :serial t
   :pathname "src"
