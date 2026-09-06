@@ -20,13 +20,22 @@ if (cert && key) {
     cert: readFileSync(cert),
     key: readFileSync(key),
   });
-  const wss = new WebSocketServer({ server: https, path: "/echo" });
+  const wss = new WebSocketServer({
+    server: https,
+    path: "/echo",
+    perMessageDeflate: true,
+  });
   wss.on("connection", onConnection);
   https.listen(port, "127.0.0.1", () => {
     console.log(`LISTEN ${port}`);
   });
 } else {
-  const wss = new WebSocketServer({ host: "127.0.0.1", port, path: "/echo" });
+  const wss = new WebSocketServer({
+    host: "127.0.0.1",
+    port,
+    path: "/echo",
+    perMessageDeflate: true,
+  });
   wss.on("listening", () => {
     console.log(`LISTEN ${port}`);
   });
