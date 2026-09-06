@@ -3,7 +3,7 @@
   :description "Interop canary: ws-protocol accept vs Python websockets / Node ws"
   :author "egao1980"
   :license "MIT"
-  :depends-on ("ws-protocol"
+  :depends-on ((:version "ws-protocol" "0.4.2")
                "ws-backend-websocket-driver"
                "websocket-driver"
                "websocket-driver-server"
