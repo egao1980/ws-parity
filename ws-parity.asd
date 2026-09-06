@@ -15,7 +15,7 @@
                "alexandria"
                "rove")
   :properties (:cl-repo
-               (:ci (:with ("dissect" "http-backend-async"
+               (:ci (:with ("ws-protocol" "dissect" "http-backend-async"
                              "event-backend-libuv" "cl-stack-ssl"
                              "fast-websocket"
                              "compression-protocol" "compression-backend-chipz"))))
