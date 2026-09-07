@@ -19,7 +19,7 @@
   (let ((fn (and (find-package :ws-backend-websocket-driver)
                  (find-symbol "CONNECTION-DEFLATE-P"
                               :ws-backend-websocket-driver))))
-    (and fn (funcall fn conn))))
+    (and fn (ignore-errors (funcall fn conn)))))
 
 (defun start-lisp-server (&key (port (%free-port)) ssl compression
                             (transport :http/1.1))
