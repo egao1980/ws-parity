@@ -4,7 +4,7 @@
   :author "egao1980"
   :license "MIT"
   :depends-on ((:version "ws-protocol" "0.4.2")
-               (:version "ws-backend-websocket-driver" "0.4.1")
+               (:version "ws-backend-websocket-driver" "0.4.2")
                "websocket-driver"
                "websocket-driver-server"
                "clack"
