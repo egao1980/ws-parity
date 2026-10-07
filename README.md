@@ -3,7 +3,7 @@
 Interop canary: **[`ws-protocol`](https://github.com/egao1980/ws-protocol)** `accept` / `make-ws-server` vs **Python `websockets`** and **Node `ws`**.
 
 Lisp owns the harness and assertions. Node/Python peers are the SUT.
-**CI-only — not published to GHCR.** Wave-1 is **H1 Upgrade** (RFC 6455). H2 Extended CONNECT stays in `ws-backend-websocket-driver` tests.
+**CI-only — not published to GHCR.**
 
 ```
 Lisp client  →  Lisp server
@@ -13,7 +13,8 @@ Node client  →  Lisp server
 Python client → Lisp server
 ```
 
-Cases: text echo + close code 1000.
+Cases: text echo, binary echo, close code 1000, WSS (driver test certs),
+permessage-deflate, and Lisp→Lisp H2 Extended CONNECT.
 
 ## Run
 
@@ -41,7 +42,7 @@ See [MATRIX.md](MATRIX.md).
 |----------|---------|---------|
 | `WS_PARITY_PEERS` | on | `0` skips Node/Python peers |
 
-permessage-deflate is out.
+permessage-deflate is in (RFC 7692 via the websocket-driver backend wrap).
 
 ## License
 

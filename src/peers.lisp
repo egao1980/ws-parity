@@ -101,22 +101,31 @@
   (when (eq kind :node)
     (uiop:native-namestring (merge-pathnames "node/" *peer-root*))))
 
-(defun peer-command (kind port)
-  (ecase kind
-    (:node
-     (list (which "node") "server.mjs" (princ-to-string port)))
-    (:python
-     (python-cmd "server.py" (princ-to-string port)))))
+(defun driver-cert (name)
+  (asdf:system-relative-pathname
+   "ws-backend-websocket-driver" (format nil "tests/certs/~A" name)))
 
-(defun client-command (kind url payload close-code)
-  (ecase kind
-    (:node
-     (list (which "node") "client.mjs" url payload (princ-to-string close-code)))
-    (:python
-     (python-cmd "client.py" url payload (princ-to-string close-code)))))
+(defun peer-command (kind port &key ssl)
+  (let ((extra (when ssl
+                 (list (uiop:native-namestring (driver-cert "server.crt"))
+                       (uiop:native-namestring (driver-cert "server.key"))))))
+    (ecase kind
+      (:node
+       (append (list (which "node") "server.mjs" (princ-to-string port)) extra))
+      (:python
+       (append (python-cmd "server.py" (princ-to-string port)) extra)))))
 
-(defun start-peer-server (kind &key (port (%free-port)) (timeout 30))
-  (let* ((cmd (peer-command kind port))
+(defun client-command (kind url payload close-code &key binary)
+  (let ((mode (if binary "binary" "text")))
+    (ecase kind
+      (:node
+       (list (which "node") "client.mjs" url payload
+             (princ-to-string close-code) mode))
+      (:python
+       (python-cmd "client.py" url payload (princ-to-string close-code) mode)))))
+
+(defun start-peer-server (kind &key (port (%free-port)) (timeout 30) ssl)
+  (let* ((cmd (peer-command kind port :ssl ssl))
          (log (uiop:with-temporary-file (:pathname p :keep t)
                 p))
          (proc (uiop:launch-program cmd
@@ -129,7 +138,9 @@
         (ignore-errors (uiop:terminate-process proc :urgent t))
         (error "~a~%cmd: ~s~%log:~%~a"
                e cmd (ignore-errors (uiop:read-file-string log)))))
-    (values proc port (format nil "ws://127.0.0.1:~a/echo" port) log)))
+    (values proc port
+            (format nil "~A://127.0.0.1:~a/echo" (if ssl "wss" "ws") port)
+            log)))
 
 (defun stop-peer-server (proc)
   (when proc
